@@ -25,8 +25,12 @@ dependencies {
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	// 3. MUSTACHE : 화면 뷰
 	implementation 'org.springframework.boot:spring-boot-starter-mustache'
+	// 4. LOMBOK : 롬복
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
+

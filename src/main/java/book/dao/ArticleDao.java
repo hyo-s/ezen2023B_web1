@@ -1,10 +1,14 @@
 package book.dao;
 
+import book.dto.ArticleDto;
+import org.springframework.stereotype.Component;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+@Component
 public class ArticleDao {
 
     // 필드
@@ -23,6 +27,26 @@ public class ArticleDao {
         }catch (Exception e){
             System.out.println("DB 연동실패" + e);
         }
+    }
+
+    public boolean createArticle(ArticleDto dto){
+        System.out.println("ArticleDao.createArticle");
+        System.out.println("form = " + dto);
+        try{
+            String sql = "insert into article( title,content ) values( ?, ? )";
+            System.out.println(sql);
+            ps=conn.prepareStatement(sql);
+            ps.setString(1,dto.getTitle());
+            ps.setString(2,dto.getContent());
+
+            int count = ps.executeUpdate();
+            if(count == 1){
+                return true;
+            }
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return false;
     }
 
 

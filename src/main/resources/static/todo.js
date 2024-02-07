@@ -2,7 +2,28 @@ console.log('todo.js실행')
 
 // 1. 할일 등록
 function doPost(){
+    console.log('doPost()');
+    let content = document.querySelector('#content').value;
+    let deadline = document.querySelector('#deadline').value;
+    console.log(content);
+    console.log(deadline);
 
+    let info = {
+        content : content,
+        deadline : deadline
+    }; console.log(info);
+
+   $.ajax({
+        url : '/todo/post.do',
+        method : 'post',
+        data : info,
+        success : function( result ){
+            console.log(result);
+            if(result==true){
+                doGet();
+            }
+        }
+   })
 }
 doGet(); // JS 실행 시 최초 1번 실행
 // 2. 할일 출력

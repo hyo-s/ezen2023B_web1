@@ -119,3 +119,16 @@ SPRING
         implementation 'org.springframework.boot:spring-boot-starter-mustache'
     JQUERY
         <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+=====================================================================================
+    # 3. 로깅(로그 남기는 작업 : 유지보수 )
+    # logging.file.name = (프로젝트명/)폴더명/파일경로
+    logging.file.name = logs/testLog.log
+    # 등급 : debug < info < warn < error
+
+    # error 로그 기록
+    # logging.level.root = error
+
+    # info < warn < error 로그 기록
+    logging.level.root = info
+
+    # logging.level.패키지( root=전체 , book.controller.ArticleController = 특정컨트롤 )

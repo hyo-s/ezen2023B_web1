@@ -1,27 +1,51 @@
 package book.controller;
 
-import book.dto.ArticleForm;
+import book.dao.ArticleDao;
+import book.dto.ArticleDto;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
+@Slf4j
 public class ArticleController {
+
+    @Autowired
+    ArticleDao articleDao;
+
 
     // 1. 글쓰기 페이지 반환
     @GetMapping("/articles/new")
     public String newArticleForm(){
+        System.out.println("ArticleController.newArticleForm");
         return "articles/new";  // 확장자 빼고 resources/templates
     }
 
     // 2. 글쓰기 처리
     @PostMapping("/articles/create")
-    public String createArticle(ArticleForm form){
+    public boolean createArticle(ArticleDto dto){
         System.out.println("ArticleController.createArticle");
 
-        System.out.println("form = " + form);
-        return "";
+        // 디버그 로그
+        log.debug(dto.toString());
+        // 경고 로그
+        log.warn(dto.toString());
+        // 에러 로그
+        log.error(dto.toString());
+        // 정보 로그
+        log.info(dto.toString());
+
+        System.out.println("dto = " + dto);
+
+        boolean result = articleDao.createArticle(dto);
+
+        return result;
     }
+
+    // DAO에게 요청하고 응답받기
+
 }
 /*
     @ 어노테이션

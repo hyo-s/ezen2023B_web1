@@ -9,12 +9,4 @@ public class ArticleForm {
         this.title = title;
         this.content = content;
     }
-
-    @Override
-    public String toString() {
-        return "ArticleForm{" +
-                "title='" + title + '\'' +
-                ", content='" + content + '\'' +
-                '}';
-    }
 }
