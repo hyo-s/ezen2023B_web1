@@ -1,12 +1,15 @@
 package book.dao;
 
 import book.dto.ArticleDto;
+import book.dto.ArticleForm;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class ArticleDao {
@@ -49,5 +52,38 @@ public class ArticleDao {
         return false;
     }
 
+    // 2. 개별 글 조회 : 매개변수 : 조회할 게시물 번호 (id) 반환 : 조회할 게시물 정보 1개 (DTO)
+    public ArticleForm show(Long id){
+        try {
+            String sql = "select * from article where id = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1,id);
+            rs = ps.executeQuery();
+            if(rs.next()){
+                ArticleForm form = new ArticleForm(rs.getLong(1),rs.getString(2),rs.getString(3));
+                return form;
+            }
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return null;
+    }
+
+    // 3. 전체 글 조회
+    public List<ArticleForm> index(){
+        List<ArticleForm> list = new ArrayList<>();
+        try {
+            String sql = "select * from article";
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()){
+                ArticleForm form = new ArticleForm(rs.getLong(1),rs.getString(2),rs.getString(3));
+                list.add(form);
+            }
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return list;
+    }
 
 }

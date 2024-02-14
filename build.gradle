@@ -1,16 +1,21 @@
 // =========================== 라이브러리 자동 빌드 시스템 =========================== //
-
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.2'
 	id 'io.spring.dependency-management' version '1.1.4'
-    id 'org.jetbrains.kotlin.jvm'
 }
 
-group = 'com.example'
+group = 'com'
 version = '0.0.1-SNAPSHOT'
 
 java {
+	sourceCompatibility = '17'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
 }
 
 repositories {
@@ -28,13 +33,9 @@ dependencies {
 	// 4. LOMBOK : 롬복
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
-}
-kotlin {
-    jvmToolchain(17)
 }
 

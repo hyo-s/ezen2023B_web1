@@ -2,11 +2,17 @@ package book.controller;
 
 import book.dao.ArticleDao;
 import book.dto.ArticleDto;
+import book.dto.ArticleForm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 @Controller
 @Slf4j
@@ -44,8 +50,37 @@ public class ArticleController {
         return result;
     }
 
-    // DAO에게 요청하고 응답받기
+    // 조회
+        // [ 개별 조회 ]
+        // 1. 클라이언트가 서버 요청 시 id / 식별키
+        // 2. HTTP URL 이용한 요청 /articles/1, /articles/2
+        // 3. 서버 Controller 요청 URL 매핑 / 연결 받기
+        // 4. @GetMapping("/articles/{id}")
+        // 5. 함수 매개변수에서 URL
+        // 6. 함수 매개변수 앞에 @PathVariable
+    @GetMapping("/articles/{id}")
+    public String show(@PathVariable Long id, Model model){
+        System.out.println("ArticleController.show");
+        System.out.println("id = " + id);
+        // 1. 요청된 id를 가지고 DAO에게 데이터 요청
+        ArticleForm form = articleDao.show(id);
+        // 2. DAO에게 전달받은 값을 뷰 템플릿에게 전달하기
+        model.addAttribute("article",form);
+        model.addAttribute("name","유재석");
+        // 3. 해당 함수가 종료될 때 리턴값 1. 화면 / 뷰 ( 머스테치, HTML ) 2. 값( JSON / 자바객체 )
+        return "articles/show";
+    }
+        // [ 전체 조회 ]
 
+    @GetMapping("/articles")
+    public String index(Model model){
+        // 1. DAO에게 요청해서 데이터 가져온다.
+        List<ArticleForm> result = articleDao.index();
+        // 2. 뷰 템플릿(머스테치)에게 전달할 값을 model 담아준다.
+        model.addAttribute("articleList",result);
+        // 3. 뷰 페이지 설정
+        return "articles/index";
+    }
 }
 /*
     @ 어노테이션

@@ -1,0 +1,22 @@
+{{>layouts/header}}
+<h3>{{name}}</h3>
+<table border="1">
+    <thead>
+    <tr>
+        <th> ID </th>
+        <th> TITLE </th>
+        <th> CONTENT </th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#article}}
+        <tr>
+            <td>{{id}}</td>
+            <td>{{title}}</td>
+            <td>{{content}}</td>
+        </tr>
+    {{/article}}
+    </tbody>
+</table>
+
+{{>layouts/footer}}
