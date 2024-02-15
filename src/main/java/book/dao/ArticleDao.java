@@ -4,10 +4,7 @@ import book.dto.ArticleDto;
 import book.dto.ArticleForm;
 import org.springframework.stereotype.Component;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,24 +29,43 @@ public class ArticleDao {
         }
     }
 
-    public boolean createArticle(ArticleDto dto){
+    public ArticleDto createArticle(ArticleDto dto){
         System.out.println("ArticleDao.createArticle");
         System.out.println("form = " + dto);
+        // 1. 세이브 성공 시 반환할 DTO
+        ArticleDto saved = new ArticleDto();
         try{
             String sql = "insert into article( title,content ) values( ?, ? )";
             System.out.println(sql);
-            ps=conn.prepareStatement(sql);
+            // ps=conn.prepareStatement(sql);
+            // * insert 된 auto_increment 자동번호 식별키 호출하는 방법
+            // 1. SQL 기재할 때 자동으로 생성된 키를 호출
+            // 2. rs = ps.getGeneratedKeys( );
+            // 3. rs.next( ) ---> rs.get타입(1) : 방금 생성된 키 반환
+            ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
             ps.setString(1,dto.getTitle());
             ps.setString(2,dto.getContent());
 
             int count = ps.executeUpdate();
-            if(count == 1){
-                return true;
+
+            rs = ps.getGeneratedKeys();
+            if(rs.next()){
+                System.out.println("방금 자동으로 생성된 PK(ID) : " + rs.getLong(1));
+                Long id = rs.getLong(1);
+                saved.setId(id);
+                saved.setTitle(dto.getTitle());
+                saved.setContent(dto.getContent());
+                return saved;
             }
+            // 5.
+//            if(count == 1){
+//                return true;
+//            }
         }catch (Exception e){
             System.out.println(e);
         }
-        return false;
+        return saved;
     }
 
     // 2. 개별 글 조회 : 매개변수 : 조회할 게시물 번호 (id) 반환 : 조회할 게시물 정보 1개 (DTO)
@@ -60,7 +76,7 @@ public class ArticleDao {
             ps.setLong(1,id);
             rs = ps.executeQuery();
             if(rs.next()){
-                ArticleForm form = new ArticleForm(rs.getLong(1),rs.getString(2),rs.getString(3));
+                ArticleForm form = new ArticleForm(rs.getLong("id"),rs.getString("title"),rs.getString("content"));
                 return form;
             }
         }catch (Exception e){
@@ -86,4 +102,51 @@ public class ArticleDao {
         return list;
     }
 
+    public ArticleForm findById(long id){
+        try {
+            String sql = "select * from article where id = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1,id);
+            rs = ps.executeQuery();
+            if(rs.next()){
+                return new ArticleForm(rs.getLong("id"),rs.getString(2),rs.getString(3));
+            }
+        }catch (Exception e){
+            System.out.println("e = " + e);
+        }
+        return null;
+    }
+
+    public ArticleForm update(ArticleForm form){
+        try {
+            String sql = "update article set title = ?, content = ? where id = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1,form.getTitle());
+            ps.setString(2,form.getContent());
+            ps.setLong(3,form.getId());
+
+            int count = ps.executeUpdate();
+            if(count==1){
+                return form;
+            }
+        }catch (Exception e){
+            System.out.println("e = " + e);
+        }
+        return null;
+    }
+
+    public boolean delete(long id){
+        try {
+            String sql = "delete from article where id = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1,id);
+            int count = ps.executeUpdate();
+            if(count==1){
+                return true;
+            }
+        }catch (Exception e){
+            System.out.println("e = " + e);
+        }
+        return false;
+    }
 }

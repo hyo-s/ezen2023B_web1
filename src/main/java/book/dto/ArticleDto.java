@@ -8,7 +8,7 @@ import lombok.*;
 @Getter
 @Setter
 public class ArticleDto {
-    private Long id;
+    private long id;
     private String title;
     private String content;
 

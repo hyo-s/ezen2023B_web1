@@ -7,10 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,15 +20,15 @@ public class ArticleController {
 
 
     // 1. 글쓰기 페이지 반환
-    @GetMapping("/articles/new")
+    @GetMapping("/articles/new")    // GET 방식
     public String newArticleForm(){
         System.out.println("ArticleController.newArticleForm");
-        return "articles/new";  // 확장자 빼고 resources/templates
+        return "/articles/new";  // 확장자 빼고 resources/templates
     }
 
     // 2. 글쓰기 처리
     @PostMapping("/articles/create")
-    public boolean createArticle(ArticleDto dto){
+    public String createArticle(ArticleDto dto){
         System.out.println("ArticleController.createArticle");
 
         // 디버그 로그
@@ -45,9 +42,9 @@ public class ArticleController {
 
         System.out.println("dto = " + dto);
 
-        boolean result = articleDao.createArticle(dto);
+        ArticleDto result = articleDao.createArticle(dto);
 
-        return result;
+        return "/redirect:/articles/" + result.getId();
     }
 
     // 조회
@@ -59,7 +56,7 @@ public class ArticleController {
         // 5. 함수 매개변수에서 URL
         // 6. 함수 매개변수 앞에 @PathVariable
     @GetMapping("/articles/{id}")
-    public String show(@PathVariable Long id, Model model){
+    public String show(@PathVariable long id, Model model){
         System.out.println("ArticleController.show");
         System.out.println("id = " + id);
         // 1. 요청된 id를 가지고 DAO에게 데이터 요청
@@ -68,7 +65,7 @@ public class ArticleController {
         model.addAttribute("article",form);
         model.addAttribute("name","유재석");
         // 3. 해당 함수가 종료될 때 리턴값 1. 화면 / 뷰 ( 머스테치, HTML ) 2. 값( JSON / 자바객체 )
-        return "articles/show";
+        return "/articles/show";
     }
         // [ 전체 조회 ]
 
@@ -79,7 +76,45 @@ public class ArticleController {
         // 2. 뷰 템플릿(머스테치)에게 전달할 값을 model 담아준다.
         model.addAttribute("articleList",result);
         // 3. 뷰 페이지 설정
-        return "articles/index";
+        return "/articles/index";
+    }
+
+    @GetMapping("/articles/{id}/edit")
+    public String edit(@PathVariable("id") long id, Model model){
+        System.out.println("id = " + id);
+        // 1. 기존 데이터 불러오기 DAO 요청
+        ArticleForm form = articleDao.findById(id);
+        // 2. 응답결과를 뷰 템플릿에게 보낼 준비 model;
+        model.addAttribute("article",form);
+        // 3. 뷰 페이지 설정
+        return "/articles/edit";
+    }
+
+    @PostMapping("/articles/update") // @PatchMapping @PutMapping
+    // 수정 데이터 받아오기
+    public String update(ArticleForm form){
+        // * form 입력 데이터를 Dto 매개변수로 받을 때
+            // 1. form 입력상자의 name과 Dto 필드명 동일
+            // 2. Dto의 필드 값을 저장할 생성자 필요
+        System.out.println("form = " + form);
+        // 2. DAO 요청하고 응답받기
+        ArticleForm updated = articleDao.update(form);
+        // 수정 처리 된 상세페이지로 이동
+        return "redirect:/articles/" + updated.getId();
+    }
+    // @PathVariable : 요청한 HTTP URL 경로상의 매개변수 대입
+        // URL : /articles/{매개변수명}/edit
+        // JAVA 함수( @PathVariable("URL매개변수명") 타입 매개변수명 )
+        // URL 매개변수명 생략 시 함수의 매개변수명과 일치할 경우 자동 대입
+
+    @GetMapping("/articles/{id}/delete")
+    public String delete(@PathVariable("id") long id){
+        System.out.println("id = " + id);
+        // 1. 삭제할 대상
+        // 2. DAO 삭제 요청하고 응답받기
+        boolean result = articleDao.delete(id);
+        // 3. 결과 페이지로 리다이렉트 하기.
+        return "redirect:/articles";
     }
 }
 /*

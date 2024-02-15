@@ -1,5 +1,4 @@
 {{>layouts/header}}
-<h3>{{name}}</h3>
 <table border="1">
     <thead>
     <tr>
@@ -18,5 +17,7 @@
     {{/article}}
     </tbody>
 </table>
-
+<a href="/articles">Go To Article</a>
+<a href="/articles/{{article.id}}/edit">수정 EDIT</a>
+<a href="/articles/{{article.id}}/delete">삭제 DELETE</a>
 {{>layouts/footer}}
