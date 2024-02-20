@@ -18,7 +18,7 @@ function signup(){  // FUNCTION START
     let info = {
         id : id, pw : pw, name : name, phone : phone, email : email, img : img
     };
-    console.log(info);
+    console.log("info : " + info);
 
     // 3. SPRING CONTROLLER 통신 [ JQUERY AJAX ]
     $.ajax({    // AJAX START
@@ -26,7 +26,7 @@ function signup(){  // FUNCTION START
         method : 'post',                    // 어떻게
         data : info,                        // 무엇을 보내고 입력 받은 값 보내기
         success : function ( result ){      // 무엇을 받을지 통신 후 응답받은 값
-            console.log(result);
+            console.log("success : " + result);
             // 4. 결과
             if(result){
                 alert('회원가입 성공');
@@ -50,7 +50,7 @@ function login(){   // FUNCTION START
     let info = {
         id : id, pw : pw
     };
-    console.log(info);
+    console.log("info : " + info);
 
     // 3. SPRING CONTROLLER 통신 [ JQUERY AJAX ]
     $.ajax({    // AJAX START
@@ -58,7 +58,7 @@ function login(){   // FUNCTION START
         method : 'post',
         data : info,
         success : function ( result ){
-            console.log(result);
+            console.log("success : " + result);
             // 4. 결과
             if(result){
                 alert('로그인 성공');

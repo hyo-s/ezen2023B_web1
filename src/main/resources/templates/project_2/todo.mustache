@@ -1,0 +1,48 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>TodoList</title>
+    <script  src="http://code.jquery.com/jquery-latest.min.js"></script>
+</head>
+<body>
+
+        <table>
+            <thead>
+            <th>번호</th>
+            <th>할 일</th>
+            <th>등록 날짜</th>
+            <th>상태</th>
+            <th></th>
+            <th></th>
+
+            </thead>
+        <tbody>
+        {{#todoArr}}
+                <tr class="todo {{tcondition}}">
+                    <td>{{id}}</td>
+                    <td>{{content}}</td>
+                    <td>{{tdate}}</td>
+                    <td>{{tcondition}}</td>
+                    <td><button onclick="tododelete({{id}})">삭제</button></td>
+                    <td><button onclick="success({{id}})">완료</button></td>
+
+                </tr>
+        {{/todoArr}}
+
+
+        </tbody>
+        </table>
+    <br/>
+    <input id="content"/>
+    <button onclick="todoCreate()">등록</button>
+
+
+    <script src="/TeamProjectTodo/todo.js"></script>
+    <style>
+        .todo.true {text-decoration: line-through}
+    </style>
+</body>
+</html>
