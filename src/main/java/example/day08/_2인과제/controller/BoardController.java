@@ -5,10 +5,7 @@ import example.day08._2인과제.dto.BoardDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -44,29 +41,33 @@ public class BoardController {
         return result;
     }
 
-    @GetMapping("/board/update")
+    @PostMapping("/board/update")
     @ResponseBody
     // 3. 수정
     public boolean boardUpdate(BoardDto boardDto){
         System.out.println("BoardController.boardUpdate");
         System.out.println("boardDto = " + boardDto);
-
-        boolean result = boardDao.boardUpdate(boardDto);
-        System.out.println("result = " + result);
+        boolean result = boardDao.confirmPassword(boardDto.getBno(),boardDto.getBpassword());
+        if(result){
+            result = boardDao.boardUpdate(boardDto);
+            System.out.println("result = " + result);
+        }
 
         return result;
     }
 
-    @GetMapping("/board/delete/{bno}")
+    @GetMapping("/board/delete/{bno}/{bpassword}")
     @ResponseBody
     // 4. 삭제
-    public boolean boardDelete(@PathVariable("bno") int bno){
+    public boolean boardDelete(@PathVariable("bno") int bno, @PathVariable("bpassword") String bpassword){
         System.out.println("BoardController.boardDelete");
         System.out.println("bno = " + bno);
 
-        boolean result = boardDao.boardDelete(bno);
-        System.out.println("result = " + result);
-
+        boolean result = boardDao.confirmPassword(bno,bpassword);
+        if(result){
+            result = boardDao.boardDelete(bno);
+            System.out.println("result = " + result);
+        }
         return result;
     }
 
