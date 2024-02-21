@@ -19,7 +19,7 @@ create table score(
     scscore int,
     scdate datetime default now(),
     primary key(scno),
-    foreign key(sno) references staff(sno)
+    foreign key(sno) references staff(sno) on delete cascade on update cascade
 );
 insert into staff(sname,sphone) values("홍길동","010-1111-1111");
 insert into staff(sname,sphone) values("김자바","010-2222-2222");
