@@ -1,9 +1,1 @@
-pluginManagement {
-    plugins {
-        id 'org.jetbrains.kotlin.jvm' version '1.9.21'
-    }
-}
-plugins {
-    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.5.0'
-}
 rootProject.name = 'ezen_2023B_WEB1_hyoseong'
