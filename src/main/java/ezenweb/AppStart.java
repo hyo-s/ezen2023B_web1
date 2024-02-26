@@ -10,3 +10,5 @@ public class AppStart {
         SpringApplication.run(AppStart.class);
     }
 }
+
+// favicon.ico static 폴더에 ico 파일 넣기

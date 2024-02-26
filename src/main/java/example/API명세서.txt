@@ -1,0 +1,32 @@
+요청 HTTP
+기능(회원가입)			URL			params 설명								method		contentType
+회원가입 페이지요청		/member/signup											GET		text/html;		
+회원가입 요청			/member/signup		{ id="아이디", pw="비밀번호"}						POST		application/x-www-form-urlencode
+		
+기능(로그인)
+로그인 페이지 요청			/member/login											GET		text/html;
+로그인 요청			/member/login		{ id="아이디", pw="비밀번호"}						POST		application/x-www-form-urlencode
+
+기능(회원수정)
+회원번호 요청			/member/{no}/update	no = 회원번호 식별키							GET		text/html;
+회원 수정 요청			/member/update		{ pw="비밀번호", name="이름",phone="전화번호", email="이메일", img="프로필}	POST		application/x-www-form-urlencode
+						
+기능(회원탈퇴)
+회원 탈퇴 요청			/member/{no}/delete	no = 회원번호 식별키							GET		text/html;
+
+
+서버 request									서버 response
+기능(회원가입)		mapping			params				기능(회원가입)		응답				contentType			
+회원가입 페이지요청	@GetMapping						회원가입 페이지요청	signup.mustache			text/html;
+회원가입 요청		@PostMapping		MemberDto			회원가입 요청		boolean
+
+기능(로그인)									기능(로그인)
+로그인 페이지요청		@GetMapping						로그인 페이지요청		login.mustache			text/html;
+로그인 요청		@PostMapping		LoginDto				로그인 요청		boolean
+
+기능(회원수정)									기능(회원수정)
+회원번호 요청		@GetMapping		@PathVariable int no		회원번호 요청		update.mustache			text/html;
+회원 수정 요청		@PostMapping		UpdateDto			회원 수정 요청		boolean
+	
+기능(회원탈퇴)									기능(회원탈퇴)
+회원 탈퇴 요청		@GetMapping		@PathVariable int no		회원탈퇴 요청		delete.mustache			text/html;	

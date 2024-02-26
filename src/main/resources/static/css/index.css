@@ -1,0 +1,57 @@
+/*
+    선택자 { 속성명 : 값, 속성명 : 값 }
+        선택자
+            1. *
+            2. 마크업 명
+            3. .class   복수
+            4. #id      단일
+    - 우선순위 : !important -> style 속성 -> id -> class -> 마크업 -> *
+    자식 선택자
+        선택자 > 선택자
+    자손 선택자 띄어쓰기
+        선택자 선택자
+    복수 선택자
+        선택자, 선택자
+*/
+@font-face {
+    font-family: 'NPSfontBold';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2310@1.0/NPSfontBold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    font-family: 'NPSfontBold';
+}
+
+#head_logo > img {
+    width: 150px;
+}
+
+#main_menu{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0px;
+}
+
+#main_menu > li{
+    margin: 0px 30px;
+}
+
+#login_menu{
+    display: flex;
+    margin-bottom: 0px;
+}
+
+#login_menu > li{
+    margin: 0px 10px;
+}
+
+.top_menu{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0px;
+}
