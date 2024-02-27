@@ -134,7 +134,13 @@ public class AppStart {
             5. data : "HTTP SEND DATA"
                 METHOD : GET,DELETE -> 쿼리스트링
                 METHOD : POST,PUT -> BODY(본문)
-            7. content type : [ DEFAULT ] application/x-www-form-urlencoded
+            7. content type :
+                일반 FORM        : [ DEFAULT ] application/x-www-form-urlencoded
+                첨부파일 FORM     : [ FALSE ] multipart/form-data
+                JS JSON         : application/json
+            8. 첨부파일( 대용량 파일) 시 추가 속성
+                processData : false 문자형식이 아닌 바이트 형식으로 보내는 방법
+
 
 
 */

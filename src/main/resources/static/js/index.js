@@ -13,18 +13,29 @@ $.ajax({
         let html = '';
 
         if( r != '' ){ // 로그인 했을때
-            html +=`
-                <li class="nav-item">
-                    <a class="nav-link" onclick='logout()'>로그아웃</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">마이페이지</a>
-                </li>
-                <li class="nav-item">
-                    <img src="#">
-                    ${r}님
-                </li>
-            `;
+            $.ajax({
+                url : '/member/login/info',
+                method : 'get',
+                data : {id : r},
+                async : false,
+                success : (r2)=>{
+                    console.log(r2);
+                    console.log(r2.uuidFile);
+                    html +=`
+                        <li class="nav-item">
+                            <a class="nav-link" onclick='logout()'>로그아웃</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">마이페이지</a>
+                        </li>
+                        <li class="nav-item">
+                            <img src="/img/${r2.uuidFile}">
+                            ${r}님
+                        </li>
+                    `;
+                }
+            });
+
         }else{ // 로그인 안했을때
             html +=`
                 <li class="nav-item">

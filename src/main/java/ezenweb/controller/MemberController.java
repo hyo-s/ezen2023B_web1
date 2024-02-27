@@ -4,6 +4,7 @@ import ezenweb.model.dao.MemberDao;
 import ezenweb.model.dto.LoginDto;
 import ezenweb.model.dto.MemberDto;
 import ezenweb.model.dto.UpdateDto;
+import ezenweb.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.util.UUID;
 
 @Controller
 public class MemberController {
@@ -20,6 +25,8 @@ public class MemberController {
     private HttpServletRequest request;
     @Autowired
     private MemberDao memberDao;
+    @Autowired
+    private MemberService memberService;
 
     // 1. VIEW <---> CONTROLLER HTTP 통신방식 설계
     // 2. CONTROLLER MAPPING 체크 ( API TESTER )
@@ -32,7 +39,7 @@ public class MemberController {
     public boolean doPostSignup(MemberDto memberDto){
         System.out.println(" ◆ Member [ Controller ].doPostSignup ◆");
         System.out.println(" ┗▶ memberDto = " + memberDto);
-        boolean result = memberDao.doPostSignUp(memberDto); // DAO처리
+        boolean result = memberService.doPostSingUp(memberDto);
         return result;  // DAO 요청 후 응답 결과를 보내기
     }
 
@@ -50,6 +57,8 @@ public class MemberController {
             // 2. HTTP 세션 객체 호출 .getSession( )
             // * 3. HTTP 세션 데이터 [ 저장 ] .setAttribute( "세션명","데이터" ) -- 자동 형변환 ( 자 --> 부 )
         if(result){ // 만약에 로그인 성공이면 세션 부여
+
+            // 세션에 저장할 내용물들을 구성 ( 식별키 만 )
             request.getSession().setAttribute("loginDto",loginDto.getId());
         }
         return result;  // DAO 요청 후 응답 결과를 보내기
@@ -83,9 +92,12 @@ public class MemberController {
 
         return true;
     }
-
-
-
+    // ====================== 3. 로그인 된 회원정보 요청 [ GET ] ====================== //
+    @GetMapping("/member/login/info")
+    @ResponseBody
+    public MemberDto doGetLoginInfo( String id ){
+        return memberService.doGetLoginInfo(id);
+    }
 
     // ====================== 3. 회원가입 페이지 요청 [ GET ] ====================== //
     @GetMapping("/member/signup") // http://localhost:8080/member/signup    // 응답방식 뷰 반환 TEXT/HTML

@@ -1,5 +1,6 @@
 package ezenweb.model.dao;
 
+import example.day05._1SET컬렉션.Member;
 import ezenweb.model.dto.LoginDto;
 import ezenweb.model.dto.MemberDto;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,7 @@ public class MemberDao extends Dao {
             ps.setString(3, memberDto.getName());
             ps.setString(4, memberDto.getEmail());
             ps.setString(5, memberDto.getPhone());
-            ps.setString(6, memberDto.getImg());
+            ps.setString(6, memberDto.getUuidFile());
             int count = ps.executeUpdate();
             if(count == 1){
                 return true;
@@ -48,5 +49,30 @@ public class MemberDao extends Dao {
             System.out.println(" ※ MemberDao [ doPostLogin ] ERROR ※ = " + e);
         }
         return false;
+    }
+
+// ====================== 3. 회원 정보 요청  ====================== //
+    public MemberDto doGetLoginInfo(String id){
+        MemberDto memberDto = null;
+        try {
+            String sql = "select * from member where id = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, id);
+            rs = ps.executeQuery();
+            if(rs.next()){
+                memberDto = new MemberDto(
+                        rs.getInt(1),
+                        rs.getString(2),
+                        null,
+                        rs.getString(4),
+                        rs.getString(5),
+                        rs.getString(6),
+                        null,
+                        rs.getString(7));
+            }
+        }catch (Exception e){
+            System.out.println("e = " + e);
+        }
+        return memberDto;
     }
 }

@@ -44,6 +44,7 @@
 #login_menu{
     display: flex;
     margin-bottom: 0px;
+    align-items: center;
 }
 
 #login_menu > li{
@@ -54,4 +55,8 @@
     display: flex;
     justify-content: space-between;
     margin-bottom: 0px;
+}
+
+#preimg{
+    margin-left: 20px;
 }
