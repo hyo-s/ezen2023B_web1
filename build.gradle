@@ -33,6 +33,8 @@ dependencies {
 	// 4. LOMBOK : 롬복
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+	// 5. SMTP : 자바에서 메일보내기 EMAIL SENDER
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 }
 
 tasks.named('test') {

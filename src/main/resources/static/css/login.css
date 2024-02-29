@@ -1,0 +1,36 @@
+.loginbox{
+    padding: 20px;
+    background-color: #ff00842e;
+    margin: 0 auto;
+    width: 60%;
+    border: none;
+    border-radius: 20px;
+}
+
+.label{
+    font-size: 20px;
+    color: #f9ae54;
+    margin: 10px 0px;
+}
+
+.login{
+    width: 40%;
+    margin: 0 auto;
+}
+
+.login > input{
+    width: 100%;
+    border: none;
+    border-radius: 15px;
+    height: 40px;
+    margin: 10px 0px;
+}
+
+.label button{
+    width: 100%;
+    border: none;
+    background-color: #80b0e9;
+    color: wheat;
+    margin: 0 auto;
+    border-radius: 15px;
+}

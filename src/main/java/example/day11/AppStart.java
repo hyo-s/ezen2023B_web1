@@ -109,6 +109,21 @@ public class AppStart {
             2. APPLICATION / JSON
                 @RequestBody
 
+        MVC 패턴 1
+        MVC 패턴 2
+        MVC 패턴 2 3티어 ( 스프링 MVC 아키택쳐 패턴 )
+
+                        ==톰캣===========================================================================================
+        [ 클라이언트 ]       [ VIEW ]                 [ CONTROLLER ]         [ SERVICE ]         [ REPOSITORY ]    [ DB ]
+                        resources                       @RestController      @Service           @Repository
+                        static 정적                                                              @Component
+                        (HTML,CSS,JS,IMG,MP4 등등)
+                        templates 동적
+                        (머스테치)
+                        ================================================================================================
+
+
+===============================================================================================
     AJAX
         비동기 통신 메소드
         jQuery ( JS 라이브러리 )
@@ -140,6 +155,11 @@ public class AppStart {
                 JS JSON         : application/json
             8. 첨부파일( 대용량 파일) 시 추가 속성
                 processData : false 문자형식이 아닌 바이트 형식으로 보내는 방법
+            9. async : AJAX 통신 상태를 동기화( 응답이 오기 전까지 대기 상태 ) 비동기화 ( 응답상태를 대기 안함 )
+                async : true 기본값 ( 비동기 )
+                async : false ( 동기화 )
+
+
 
 
 

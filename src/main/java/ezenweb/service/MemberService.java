@@ -5,6 +5,7 @@ import ezenweb.model.dto.MemberDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 // @Component
 @Service // 해당 클래스를 스프링 컨테이너에 등록
@@ -14,6 +15,8 @@ public class MemberService {
     private FileService fileService;
     @Autowired
     private MemberDao memberDao;
+    @Autowired
+    private EmailService emailService;
 
     // 1. 회원가입 서비스
     public boolean doPostSingUp(MemberDto memberDto){
@@ -40,13 +43,23 @@ public class MemberService {
             }
         }
         memberDto.setUuidFile(fileName);
-        return memberDao.doPostSignUp(memberDto);
+        // =========== 테스트 =========== //
+        boolean result = memberDao.doPostSignUp(memberDto);
+
+        return result;
     }
 
     // 2. 로그인 된 회원정보 요청 서비스
     public MemberDto doGetLoginInfo( String id ){
         // 1. DAO 호출
         return memberDao.doGetLoginInfo( id );
+    }
+
+    // 3. 아이디 중복 체크 요청
+    public boolean doGetFindIdCheck( String id ){
+        System.out.println("MemberController.doGetFindIdCheck");
+        System.out.println("id = " + id);
+        return memberDao.doGetFindIdCheck(id);
     }
 
 }   // CLASS END

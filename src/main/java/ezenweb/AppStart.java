@@ -44,4 +44,28 @@ public class AppStart {
     쿠키 : 클라이언트( 브라우저 )에 저장소
         단점 : 보안 취약
         비회원제 데이터( 장바구니 ,결제 ) 보안 X
+
+    첨부파일 전송 시
+        1. 폼 가져온다
+            let signUpFrom = document.querySelectorAll('.signUpForm');
+        2. 폼 객체화
+            let signUpFromData = new FormData(signUpFrom[0]);
+                * new FromData : 문자데이터가 아닌 바이트 데이터로 변환 *
+        3. AJAX 대용량 폼 전송 속성
+            data : signUpFromData,
+            contentType : false,
+            processData : false,
+
+        ( 스프링 ) 컨트롤러에서 첨부파일 매핑할 때 = MultipartFile
+            전제조건 : DTO MultipartFile 존재해야 함
+        4. MultipartFile 객체를 서비스로 보낸다.
+        5. 서비스가 MultipartFile 업로드 처리
+            [ 어디에 ]
+            File file = new File(uploadPath+fileName);
+            [ 무엇을 ]
+            multipartFile.transferTo(file);
+
+       * 업로드 된 파일들을 DB 처리 ( 파일 자체를 DB 처리 하지는 않음 )
+
+
 */
