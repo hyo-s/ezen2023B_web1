@@ -56,7 +56,6 @@ create table employee(
     department varchar(15) not null,				# 행정직원 부서
     salary bigint,									# 행정직원 급여
     foreign key(eno) references member(mno) on update cascade on delete cascade
-	# 행정직원은 수정 삭제 권한이 있다
 );
 select * from employee;
 
@@ -69,6 +68,7 @@ create table professor(
     proom varchar(100),								# 교수 강의실 위치
 	degree varchar(20) not null,					# 교수 학위
     majorpart varchar(15) not null,					# 교수 전공
+	mainmajor varchar(20) not null,					# 교수 담당 학과
     foreign key(pno) references member(mno)
 );
 select * from professor;

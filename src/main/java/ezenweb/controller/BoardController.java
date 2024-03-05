@@ -2,12 +2,15 @@ package ezenweb.controller;
 
 import example.day05._1SET컬렉션.Member;
 import ezenweb.model.dto.BoardDto;
+import ezenweb.model.dto.BoardPageDto;
 import ezenweb.service.BoardService;
 import ezenweb.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/board")
@@ -20,6 +23,7 @@ public class BoardController {
     @Autowired
     private MemberService memberService;
 
+// =============================== 1. 글쓰기 처리 =============================== //
     // 1. 글쓰기 처리            /board/write     @POST      DTO
     @PostMapping("/write.do")
     @ResponseBody
@@ -42,8 +46,15 @@ public class BoardController {
         return boardService.doPostBoardWrite(boardDto);
     }
 
+// =============================== 2. 전체 글 출력 호출 =============================== //
     // 2. 전체 글 출력 호출       /board.do        @GET       페이징처리, 검색
-
+    @GetMapping("/do") // 매개변수 : 현재페이지
+    @ResponseBody
+    public BoardPageDto doGetBoardViewList(int page){
+        System.out.println("BoardController.doGetBoardViewList");
+        return boardService.doGetBoardViewList(page);
+    }
+// =============================== 3. 개별 글 출력 호출 =============================== //
     // 3. 개별 글 출력 호출       /board/view.do   @GET       게시물번호
     @GetMapping("/view.do")
     @ResponseBody
@@ -57,19 +68,23 @@ public class BoardController {
 
     // 5. 글 삭제 처리           /board/delete.do @DELETE    게시물번호
 
-    // ====================== 머스테치는 컨트롤에서 뷰 반환 ====================== //
+// ====================== 머스테치는 컨트롤에서 뷰 반환 ====================== //
 
+// =============================== 1. 글 쓰기 페이지 호출 =============================== //
     // 1. 글쓰기 페이지 이동        /board/write    @GET
     @GetMapping("/write")
     public String getBoardWrite(){
         return "ezenweb/board/write";
     }
 
+// =============================== 2. 게시판 페이지 호출 =============================== //
     // 2. 게시판 페이지 이동        /board          @GET
     @GetMapping("")
     public String getBoard(){
         return "ezenweb/board/board";
     }
+
+// =============================== 3. 게시판 상세 페이지 호출 =============================== //
     // 3. 게시판 상세페이지 이동     /board/view     @GET
     @GetMapping("/view")
     public String getBoardView( int bno ){
