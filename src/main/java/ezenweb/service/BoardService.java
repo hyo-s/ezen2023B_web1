@@ -37,24 +37,25 @@ public class BoardService {
         return boardDao.doPostBoardWrite(boardDto);
     }
 // =============================== 2. 전체 글 출력 호출 =============================== //
-    public BoardPageDto doGetBoardViewList(int page){
+    public BoardPageDto doGetBoardViewList(int page, int pageBoardSize, int bcno, String field, String value){
         System.out.println("BoardService.doGetBoardViewList");
 
         // 페이징 처리 시 사용할 SQL 구문 : limit 시작 레코드 번호 ( 0부터 ), 출력할 개수
 
         // 1. 페이지당 게시물을 출력할 개수
-        int pageBoardSize = 5;
+            // int pageBoardSize = 5;
+
 
         // 2. 페이지당 게시물을 출력할 시작 레코드번호
         int startRow = (page-1)*pageBoardSize;
         // 3. 총 페이지 수
             // 1. 전체 게시물 수
-        int totalBoardSize = boardDao.getBoardSize() ;
+        int totalBoardSize = boardDao.getBoardSize( bcno, field, value ) ;
             // 2. 총 페이지 수 계산
         int totalPage = totalBoardSize % pageBoardSize == 0 ? totalBoardSize / pageBoardSize : totalBoardSize / pageBoardSize +1;
             System.out.println("totalPage = " + totalPage);
         // 4. 게시물 정보 요청
-        List<BoardDto> list =  boardDao.doGetBoardViewList(startRow,pageBoardSize);
+        List<BoardDto> list =  boardDao.doGetBoardViewList(startRow,pageBoardSize,bcno, field, value);
 
         // 5. 페이징버튼 최대 개수
             // 1. 페이지버튼 최대 개수
@@ -66,14 +67,27 @@ public class BoardService {
             // 만약에 총 페이지 수 보다는 커질 수 없다.
         if(endBtn >= totalPage) endBtn = totalPage;
 
-        // pageDto 구성
-        BoardPageDto boardPageDto = new BoardPageDto(
-                page,
-                totalPage,
-                startBtn,
-                endBtn,
-                list
-        );
+
+//        BoardPageDto boardPageDto = new BoardPageDto(
+//                page,
+//                totalPage,
+//                startBtn,
+//                endBtn,
+//                list
+//        );
+        // pageDto 구성 * 빌더패턴 : 생성자의 단점 ( 매개변수에 따른 유연성 부족 )을 보완
+            // new 연산자 없이 builder() 함수 이용한 객체 생성 라이브러리 제공
+            // 사용 방법 : 클래스명.builder().필드명(대입값).필드명(대입값).build();
+            // + 생성자 보단 유연성 : 매개변수의 순서와 개수 자유롭다.
+            // 빌더패턴 vs 생성자 vs Setter
+        BoardPageDto boardPageDto = BoardPageDto.builder()
+                .page(page)
+                .totalBoardSize(totalBoardSize)
+                .totalPage(totalPage)
+                .list(list)
+                .startBtn(startBtn)
+                .endBtn(endBtn)
+                .build();
         return boardPageDto;
     }
 
@@ -81,6 +95,50 @@ public class BoardService {
     public BoardDto doGetBoardView( int bno ){
         System.out.println("BoardService.doGetBoardView");
         System.out.println("bno = " + bno);
+        // 조회수 처리
+        boardDao.boardViewIncrease(bno);
         return boardDao.doGetBoardView(bno);
     }
+
+// =============================== 4. 개별 글 삭제 =============================== //
+    public boolean doDeleteBoard(int bno){
+        System.out.println("BoardService.doDeleteBoard");
+        System.out.println("bno = " + bno);
+
+        String bfile = boardDao.doGetBoardView(bno).getBfile();
+
+        // 1. DAO 처리
+        boolean result = boardDao.doDeleteBoard(bno);
+
+        if(result){
+            // 기존에 첨부파일이 있었으면
+            System.out.println("bfile = " + bfile);
+            if(bfile != null){
+                fileService.fileDelete(bfile);
+            }
+        }
+        return result;
+    }
+
+// =============================== 5. 개별 글 수정 =============================== //
+    public boolean doPutBoard(BoardDto boardDto){
+        System.out.println("BoardService.doPutBoard");
+        System.out.println("boardDto = " + boardDto);
+
+//        System.out.println(boardDto.getUploadfile());
+//        if(!boardDto.getUploadfile().isEmpty()){    // 첨부 파일이 존재하면
+//            String fileName = fileService.fileUpload(boardDto.getUploadfile());
+//            if(fileName != null){   // 업로드 성공했으면
+//                boardDto.setBfile(fileName);// DB에 저장할 첨부파일명
+//            }else{
+//                return false; // 업로드에 문제가 발생하면 글쓰기 취소
+//            }
+//        }
+//        System.out.println(boardDto.getBfile());
+        boolean result = boardDao.doPutBoard(boardDto);
+        return result;
+    }
+
 }
+
+

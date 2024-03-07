@@ -4,6 +4,7 @@ import example.day05._1SET컬렉션.Member;
 import ezenweb.model.dto.BoardDto;
 import ezenweb.model.dto.BoardPageDto;
 import ezenweb.service.BoardService;
+import ezenweb.service.FileService;
 import ezenweb.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ public class BoardController {
     private HttpServletRequest request;
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private FileService fileService;
 
 // =============================== 1. 글쓰기 처리 =============================== //
     // 1. 글쓰기 처리            /board/write     @POST      DTO
@@ -50,9 +53,10 @@ public class BoardController {
     // 2. 전체 글 출력 호출       /board.do        @GET       페이징처리, 검색
     @GetMapping("/do") // 매개변수 : 현재페이지
     @ResponseBody
-    public BoardPageDto doGetBoardViewList(int page){
+    public BoardPageDto doGetBoardViewList(int page, int pageBoardSize, int bcno, @RequestParam("key") String field, @RequestParam("keyword") String value){
         System.out.println("BoardController.doGetBoardViewList");
-        return boardService.doGetBoardViewList(page);
+        System.out.println("value   = " + value  );
+        return boardService.doGetBoardViewList(page, pageBoardSize, bcno, field, value);
     }
 // =============================== 3. 개별 글 출력 호출 =============================== //
     // 3. 개별 글 출력 호출       /board/view.do   @GET       게시물번호
@@ -65,8 +69,35 @@ public class BoardController {
     }
 
     // 4. 글 수정 처리           /board/update.do @PUT       DTO
+    @PutMapping("/update.do")
+    @ResponseBody
+    public boolean doPutBoard(BoardDto boardDto){
+        System.out.println("BoardController.doPutBoard");
+        System.out.println("boardDto = " + boardDto);
+        boolean result = boardService.doPutBoard(boardDto);
+        return result;
+    }
 
     // 5. 글 삭제 처리           /board/delete.do @DELETE    게시물번호
+    @DeleteMapping("/delete.do")
+    @ResponseBody
+    public boolean doDeleteBoard(int bno){
+        System.out.println("BoardController.doDeleteBoard");
+        System.out.println("bno = " + bno);
+
+        boolean result = boardService.doDeleteBoard(bno);
+        return result;
+    }
+
+    // 6. 다운로드 ( 1.매개변수 : 파일이름 2.반환 3.사용처
+    @GetMapping("/file/download")
+    @ResponseBody
+    public void getBoardFileDownload(@RequestParam String bfile){
+        System.out.println("BoardController.getBoardFileDownload");
+        System.out.println("bfile = " + bfile);
+        fileService.fileDownload(bfile);
+    }
+
 
 // ====================== 머스테치는 컨트롤에서 뷰 반환 ====================== //
 

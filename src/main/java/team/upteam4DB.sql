@@ -6,10 +6,12 @@ use upteam4;
 drop table if exists class;
 create table class(
 	classno int auto_increment primary key,			 # 과목 번호
-    classname varchar(20) not null,					 # 과목 명
+    classname varchar(20) not null unique,			 # 과목 명
     classtype char(4) not null						 # 전공, 교양 여부
 );
 select * from class;
+insert into class(classname, classtype) values('수묵화의 심화','교양선택');
+update class set classname = '수묵화의 심화 중 기초', classtype = '교양필수' where classno = 1;
 
 # ================== 회원 ================== #
 drop table if exists member;
@@ -28,7 +30,8 @@ select * from member;
 # ================== 강의실 ================== #
 drop table if exists classroom;
 create table classroom(
-	roomnumber int not null unique primary key,		# 강의실 번호
+	rno int auto_increment primary key,				# 강의실 번호
+    roomnumber int not null unique,					# 강의실 호실
     totalperson int not null,						# 강의실 총 인원
     createdate datetime default now(),				# 강의실 등록 날짜
     updatedate datetime default now()				# 강의실 수정 날짜

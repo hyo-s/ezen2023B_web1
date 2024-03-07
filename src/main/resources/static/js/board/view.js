@@ -25,8 +25,25 @@ function onView(){
             document.querySelector('.mno').innerHTML = r.mno;
             document.querySelector('.bdate').innerHTML = r.bdate;
             document.querySelector('.bview').innerHTML = r.bview;
-            document.querySelector('.bfile').innerHTML = r.bfile;
+            // 다운로드 링크
+            document.querySelector('.bfile').innerHTML = `<a href="/board/file/download?bfile=${r.bfile}">${r.bfile}</a>`;
+            document.querySelector('.btnBox').innerHTML = `<button type="button" onclick="onDelete(${r.bno})">삭제</button>
+            <button type="button">수정</button>`;
         }
     });
 }
 
+function onDelete(bno){
+    $.ajax({
+        url: "/board/delete.do",
+        method : 'delete',
+        data: {'bno' : bno},
+        success: (r)=>{
+            if(r){
+                location.href="/board";
+            }else{
+            
+            }
+        }
+    });
+}

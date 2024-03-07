@@ -10,18 +10,18 @@ import org.springframework.web.multipart.MultipartFile;
 @ToString
 // @Builder // 생성자 단점을 보완한 라이브러리 함수 제공
 public class BoardDto {
-    long bno;
-    String btitle;
-    String bcontent;
-    String bfile;       // [ 첨부파일 이름 출력용 ]
-    long bview;
-    String bdate;
-    long mno;
-    long bcno;
-    MultipartFile uploadfile; // 실제 첨부파일
+    private long bno;
+    private String btitle;
+    private String bcontent;
+    private String bfile;       // [ 첨부파일 이름 출력용 ]
+    private long bview;
+    private String bdate;
+    private long mno;
+    private long bcno;
+    private MultipartFile uploadfile; // 실제 첨부파일
     // + 전체 출력 시
-    String mid;
-    String mimg;
+    private String mid;
+    private String mimg;
 }
 
 /*

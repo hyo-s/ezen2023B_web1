@@ -37,12 +37,24 @@ public class BoardDao extends Dao {
     }
 
 // =============================== 2. 전체 글 출력 호출 =============================== //
-    public List<BoardDto> doGetBoardViewList(int startRow, int pageBoardSize){
+    public List<BoardDto> doGetBoardViewList(int startRow, int pageBoardSize, int bcno, String field, String value){
         System.out.println("BoardDao.doGetBoardViewList");
         BoardDto boardDto = null;
         List<BoardDto> list = new ArrayList<>();
         try {
-            String sql = "select * from board b inner join member m on b.mno = m.no order by b.bdate desc limit ?, ?";
+            String sql = "select * from board b inner join member m on b.mno = m.no ";
+                if(bcno > 0){
+                    sql += " where bcno = " + bcno;
+                }
+                if(!value.isEmpty()) {
+                    if (bcno > 0) {
+                        sql += " and ";
+                    } else {
+                        sql += " where ";
+                    }
+                    sql += field + " like '%" + value + "%' ";
+                }
+            sql += " order by b.bdate desc limit ?, ?";
             ps = conn.prepareStatement(sql);
             ps.setInt(1,startRow);
             ps.setInt(2,pageBoardSize);
@@ -69,10 +81,25 @@ public class BoardDao extends Dao {
         return list;
     }
 // =============================== 2-2. 전체 게시물 수 호출 =============================== //
-    public int getBoardSize(){
+    public int getBoardSize(int bcno, String field, String value){
         System.out.println("BoardService.getBoardSize");
+        System.out.println("value = " + value);
         try {
-            String sql = "select count(*) from board";
+            String sql = "select count(*) from board b inner join member m on b.mno = m.no";
+            // === 만약에 카테고리 조건이 있으면 where 추가
+            if(bcno > 0){
+                sql += " where b.bcno = " + bcno;
+            }
+            // === 만약에 검색이 있을 때
+            if(!value.isEmpty()){
+                if( bcno > 0){
+                    sql += " and ";
+                }else {
+                    sql += " where ";
+                }
+                sql += field + " like '%" + value + "%' ";
+                System.out.println(sql);
+            }
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             if(rs.next()){
@@ -80,10 +107,20 @@ public class BoardDao extends Dao {
             }
         }catch (Exception e){
             System.out.println("e = " + e);
+
         }
         return 0; // 없으면 0
     }
-
+// =============================== 3-2. 개별 글 출력 시 조회수 증가 =============================== //
+    public void boardViewIncrease( int bno ){
+        try {
+            String sql = "update board set bview = bview+1 where bno = "+bno;
+            ps = conn.prepareStatement(sql);
+            ps.executeUpdate();
+        }catch (Exception e){
+            System.out.println("e = " + e);
+        }
+    }
 // =============================== 3. 개별 글 출력 호출 =============================== //
     public BoardDto doGetBoardView( int bno ){
         System.out.println("BoardDao.doGetBoardView");
@@ -113,5 +150,46 @@ public class BoardDao extends Dao {
             System.out.println("e = " + e);
         }
         return boardDto;
+    }
+
+// =============================== 4. 개별 글 삭제 =============================== //
+    public boolean doDeleteBoard(int bno){
+        System.out.println("BoardDao.doDeleteBoard");
+        System.out.println("bno = " + bno);
+        try {
+            String sql = "delete from board where bno=?";
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1,bno);
+            // ps.executeUpdate()가 1이라는 것은 sql 구문을 실행을 했는데 1개 했다
+            int count = ps.executeUpdate();
+            if (count == 1){
+                return true;
+            }
+        }catch (Exception e){
+            System.out.println("e = " + e);
+        }
+        return false;
+    }
+
+// =============================== 5. 개별 글 수정 =============================== //
+    public boolean doPutBoard(BoardDto boardDto){
+        System.out.println("BoardDao.doPutBoard");
+        System.out.println("boardDto = " + boardDto);
+        try {
+            String sql = "update board set btitle = ?, bcontent = ?, bcno = ?, bfile = ? where bno = ?";
+            ps = conn. prepareStatement(sql);
+            ps.setString(1, boardDto.getBtitle());
+            ps.setString(2, boardDto.getBcontent());
+            ps.setLong(3,boardDto.getBcno());
+            ps.setString(4,boardDto.getBfile());
+            ps.setLong(5,boardDto.getBno());
+            int count = ps.executeUpdate();
+            if(count == 1){
+                return true;
+            }
+        }catch (Exception e){
+            System.out.println("e = " + e);
+        }
+        return false;
     }
 }

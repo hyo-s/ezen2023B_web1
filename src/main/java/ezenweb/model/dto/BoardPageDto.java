@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
+@Builder
 public class BoardPageDto {
     // 1. 현재 페이지
     private int page ;
@@ -18,6 +19,8 @@ public class BoardPageDto {
     private int startBtn;
     // 4. 페이지 버튼의 끝 번호
     private int endBtn;
+    // 5. 총 게시물 수
+    private int totalBoardSize;
 
     // 실제 내용 //
     private List<BoardDto> list;
