@@ -10,6 +10,7 @@ create table class(
     classtype char(4) not null						 # 전공, 교양 여부
 );
 select * from class;
+select classname from class;
 insert into class(classname, classtype) values('수묵화의 심화','교양선택');
 update class set classname = '수묵화의 심화 중 기초', classtype = '교양필수' where classno = 1;
 

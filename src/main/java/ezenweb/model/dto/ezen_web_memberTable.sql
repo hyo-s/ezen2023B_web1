@@ -85,3 +85,41 @@ select count(*) from board b inner join member m on b.mno = m.no;
 
 # 2. pageBoardSize = 5
 # = 10 / 5 totalPage => 2 13/5 => totalPage => 2.6 + 1 ( 나머지가 있으면 +1 ) 
+
+# ========================= 카테고리 / 검색 포함 ========================= //
+# 총 레코드 / 게시물 수 : select count(*) from board;
+# 제한된 개수만큼 게시물 출력 : select * from board b inner join member m on b.mno = m.no order by b.date desc limit ?, ?;
+
+# 1. [ 조건추가 ] 카테고리 만큼의 레코드 수
+select count(*) from board where bcno = 1; # 1. bcno=1 ( 자유 )만 레코드 수
+select count(*) from board where bcno = 2; # 1. bcno=2 ( 노하우 )만 레코드 수
+select count(*) from board where bcno = 0;
+
+# 2. [ 조건추가 ] 카테고리 조건이 포함된 제한된 개수만큼 게시물 출력
+	# 1. 자유 카테고리의 1페이지
+select * from board b inner join member m on b.mno = m.no where bcno = 1 order by b.bdate desc limit 0,5;
+	# 2. 노하우 카테고리의 1페이지
+select * from board b inner join member m on b.mno = m.no where bcno = 1 order by b.bdate desc limit 0,5;
+	# 3. 전체 카테고리의 1페이지
+select * from board b inner join member m on b.mno = m.no order by b.bdate desc limit 0,5;
+
+# 3. [ 검색 조건추가 ]
+select count(*) from board where bcno = 1 and btitle like '%java%' ; # 제목에 'java'가 포함되어 있는 게시물 출력
+select count(*) from board where bcno = 1 and bcontent like '%java%' ; # 내용에 'java'가 포함되어 있는 게시물 출력
+
+select count(*) from board b inner join member m on b.mno = m.no where b.bcno = 1 and m.id like '%aaa%'; # 작성자 아이디로 검색 시 회원테이블과 조인 필요
+
+# select count(*) from board b inner join member m on b.mno = m.no where b.bcno = 1 and key like '%keyword%';
+
+update board set bview = bview+1 where bno = 1;
+select * from board;
+
+# =========================== 게시물 삭제 / 레코드 삭제 =========================== #
+# 1. 삭제
+# delete from board; 모든 레코드 삭제 : DML 복구 가능
+# truncate board; 모든 레코드 삭제 : DDL 복구 불가능
+
+# 2. 특정 레코드 삭제
+delete from board where bno=5;
+
+update board set btitle = 'a', bcontent = 'a', bcno = 2, bfile = 'aa.jpg' where bno = 1;
