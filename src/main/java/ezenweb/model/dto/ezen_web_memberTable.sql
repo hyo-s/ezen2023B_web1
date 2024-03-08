@@ -72,7 +72,7 @@ create table breply(
     constraint breply_mno_fk foreign key(mno) references member(no) on update cascade on delete cascade,
     constraint breply_bno_fk foreign key(bno) references board(bno) on update cascade on delete cascade
 );
-
+select * from breply;
 select * from breply;
 
 /*

@@ -11,8 +11,6 @@ create table class(
 );
 select * from class;
 select classname from class;
-insert into class(classname, classtype) values('수묵화의 심화','교양선택');
-update class set classname = '수묵화의 심화 중 기초', classtype = '교양필수' where classno = 1;
 
 # ================== 회원 ================== #
 drop table if exists member;
@@ -27,6 +25,8 @@ create table member(
     birth varchar(8) not null						# 회원 생년월일
 );
 select * from member;
+insert into member(id, pw, name, phone, birth) values('aa','aa','김교수','010-1111-1111','19800101');
+insert into member(id, pw, name, phone, birth) values('bb','bb','박교수','010-2222-2222','19800202');
 
 # ================== 강의실 ================== #
 drop table if exists classroom;
@@ -38,6 +38,7 @@ create table classroom(
     updatedate datetime default now()				# 강의실 수정 날짜
 );
 select * from classroom;
+insert into classroom(roomnumber, totalperson) values(201,30);
 
 # ================== 강의 시간 ================== #
 drop table if exists classtime;
@@ -45,11 +46,10 @@ create table classtime(
 	tno int auto_increment primary key,
 	classno int,									# 강의 번호
     dayweek char(3) not null,						# 강의 요일
-    starttime time not null,						# 강의 시작 시간
-    endtime time not null,							# 강의 끝 시간
+    starttime varchar(2) not null,					# 강의 시작 시간
+    endtime varchar(2) not null,						# 강의 끝 시간
     foreign key(classno) references class(classno)
 );
-insert into classtime
 select * from classtime;
 
 # ================== 행정직원 ================== #
@@ -59,7 +59,8 @@ create table employee(
     grade varchar(5),								# 직원 등급
     department varchar(15) not null,				# 행정직원 부서
     salary bigint,									# 행정직원 급여
-    foreign key(eno) references member(mno) on update cascade on delete cascade
+    mno_fk int,
+    foreign key(mno_fk) references member(mno) on update cascade on delete cascade
 );
 select * from employee;
 
@@ -73,10 +74,13 @@ create table professor(
 	degree varchar(20) not null,					# 교수 학위
     majorpart varchar(15) not null,					# 교수 전공
 	mainmajor varchar(20) not null,					# 교수 담당 학과
-    foreign key(pno) references member(mno)
+    mno_fk int,
+    foreign key(mno_fk) references member(mno)
 );
 select * from professor;
-select * from professor right outer join member on professor.pno = member.mno;
+insert into professor(pgrade, degree, majorpart, mainmajor,mno_fk) values('aa','aa','aa','aa',1);
+insert into professor(pgrade, degree, majorpart, mainmajor,mno_fk) values('bb','bb','bb','bb',2);
+select name from professor inner join member on professor.pno = member.mno;
 
 # ================== 학기 ================== #
 drop table if exists season;

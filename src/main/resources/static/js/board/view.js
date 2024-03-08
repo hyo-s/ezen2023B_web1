@@ -22,13 +22,27 @@ function onView(){
             console.log(r);
             document.querySelector('.btitle').innerHTML = r.btitle;
             document.querySelector('.bcontent').innerHTML = r.bcontent;
-            document.querySelector('.mno').innerHTML = r.mno;
+            document.querySelector('.bcno').innerHTML = r.bcno;
+            document.querySelector('.mid').innerHTML = r.mid;
             document.querySelector('.bdate').innerHTML = r.bdate;
             document.querySelector('.bview').innerHTML = r.bview;
             // 다운로드 링크
-            document.querySelector('.bfile').innerHTML = `<a href="/board/file/download?bfile=${r.bfile}">${r.bfile}</a>`;
-            document.querySelector('.btnBox').innerHTML = `<button type="button" onclick="onDelete(${r.bno})">삭제</button>
-            <button type="button">수정</button>`;
+            if(r.bfile != null){
+                document.querySelector('.bfile').innerHTML = `<a href="/board/file/download?bfile=${r.bfile}">${r.bfile}</a>`;
+            }
+            
+
+            $.ajax({
+                url: "/member/login/check",
+                method :'get',
+                success: (loginId)=>{
+                    console.log(loginId);
+                    if(loginId==r.mid){
+                        document.querySelector('.btnBox').innerHTML += `<button class="boardBtn" type="button" onclick="onDelete(${r.bno})">삭제</button>
+                        <button class="boardBtn" type="button" onclick="location.href='/board/update?bno=${r.bno}'">수정</button>`;
+                    }
+                }
+            });
         }
     });
 }

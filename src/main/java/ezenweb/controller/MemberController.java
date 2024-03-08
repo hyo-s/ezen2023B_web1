@@ -64,6 +64,7 @@ public class MemberController {
     @GetMapping("/member/login/check")
     @ResponseBody
     public String doGetLoginCheck(){
+        System.out.println("MemberController.doGetLoginCheck");
         // * 로그인 여부 확인 = 세션이 있다 없다 [ 확인 ]
             // 1. HTTP 요청 객체 호출
             // 2. HTTP 세션 객체 호출 .getSession( )

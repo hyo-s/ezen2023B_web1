@@ -5,7 +5,9 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class BoardDao extends Dao {
@@ -191,5 +193,69 @@ public class BoardDao extends Dao {
             System.out.println("e = " + e);
         }
         return false;
+    }
+
+// =============================== 6. 게시물 작성자 인증 =============================== //
+    public boolean boardWriteAuth(long bno, String mid){
+        System.out.println("BoardDao.boardWriteAuth");
+        System.out.println("bno = " + bno + ", mid = " + mid);
+        try{
+            String sql = "select * from board b inner join member m on b.mno = m.no where b.bno = ? and m.id = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1, bno);
+            ps.setString(2,mid);
+            rs = ps.executeQuery();
+            if(rs.next()){
+                return true;
+            }
+        }catch (Exception e){
+            System.out.println("e = " + e);
+        }
+        return false;
+    }
+// =============================== 7. 댓글 등록 =============================== //
+    public boolean doPostReply( Map<String, String> map ){
+        System.out.println("BoardDao.doPostReply");
+        System.out.println("map = " + map);
+
+        try {
+            String sql = "insert into breply(brcontent,brindex,mno,bno) values(?,?,?,?)";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, map.get("brcontent"));
+            ps.setString(2, map.get("brindex"));
+            ps.setString(3, map.get("mno"));
+            ps.setString(4, map.get("bno"));
+            int count = ps.executeUpdate();
+            if(count==1){
+                return true;
+            }
+        }catch (Exception e){
+            System.out.println("e = " + e);
+        }
+        return false;
+    }
+
+// =============================== 8. 댓글 출력 =============================== //
+    public List<Map<String, String>> getReplyDo(int bno){
+        System.out.println("BoardDao.getReplyDo");
+        System.out.println("bno = " + bno);
+        List<Map<String, String>> list = new ArrayList<>();
+        try {
+            String sql = "select * from breply where bno = ? brindex = 0";
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1,bno);
+            rs = ps.executeQuery();
+            while(rs.next()){
+                Map<String, String> map = new HashMap<>();
+                map.put("brno", rs.getString("brno"));
+                map.put("brcontent", rs.getString("brcontent"));
+                map.put("brdate", rs.getString("brdate"));
+                map.put("mno", rs.getString("mno"));
+                list.add(map);
+            }
+        }catch (Exception e){
+            System.out.println("e = " + e);
+        }
+        return list;
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class BoardService {
@@ -125,20 +126,43 @@ public class BoardService {
         System.out.println("BoardService.doPutBoard");
         System.out.println("boardDto = " + boardDto);
 
-//        System.out.println(boardDto.getUploadfile());
-//        if(!boardDto.getUploadfile().isEmpty()){    // 첨부 파일이 존재하면
-//            String fileName = fileService.fileUpload(boardDto.getUploadfile());
-//            if(fileName != null){   // 업로드 성공했으면
-//                boardDto.setBfile(fileName);// DB에 저장할 첨부파일명
-//            }else{
-//                return false; // 업로드에 문제가 발생하면 글쓰기 취소
-//            }
-//        }
-//        System.out.println(boardDto.getBfile());
+        // 기존 첨부파일명
+        String bfile = boardDao.doGetBoardView((int)boardDto.getBno()).getBfile();
+
+        if(!boardDto.getUploadfile().isEmpty()){
+            // 새로운 첨부파일을 업로드 하고 기존 첨부파일 삭제
+            String fileName = fileService.fileUpload(boardDto.getUploadfile());
+            if(fileName != null){
+                boardDto.setBfile(fileName);
+                // 기존 첨부파일 삭제
+                fileService.fileDelete(bfile);
+            }else {
+                return false;
+            }
+        }else {
+            boardDto.setBfile(bfile);
+        }
         boolean result = boardDao.doPutBoard(boardDto);
         return result;
     }
 
+// =============================== 6. 게시물 작성자 인증 =============================== //
+    public boolean boardWriteAuth(long bno, String mid){
+        return boardDao.boardWriteAuth(bno,mid);
+    }
+
+// =============================== 7. 댓글 등록 =============================== //
+    public boolean doPostReply( Map<String, String> map ){
+        System.out.println("BoardService.doPostReply");
+        System.out.println("map = " + map);
+        return boardDao.doPostReply(map);
+    }
+
+// =============================== 8. 댓글 출력 =============================== //
+    public List<Map<String, String>> getReplyDo(int bno){
+        System.out.println("BoardService.getReplyDo");
+        return boardDao.getReplyDo(bno);
+    }
 }
 
 

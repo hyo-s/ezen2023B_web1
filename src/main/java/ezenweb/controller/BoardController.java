@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/board")
@@ -74,8 +75,16 @@ public class BoardController {
     public boolean doPutBoard(BoardDto boardDto){
         System.out.println("BoardController.doPutBoard");
         System.out.println("boardDto = " + boardDto);
-        boolean result = boardService.doPutBoard(boardDto);
-        return result;
+
+        Object object = request.getSession().getAttribute("loginDto");
+        if( object != null ){
+            String mid = (String)object;
+            boolean result = boardService.boardWriteAuth(boardDto.getBno(),mid);
+            if(result){
+                return boardService.doPutBoard(boardDto);
+            }
+        }
+        return false;
     }
 
     // 5. 글 삭제 처리           /board/delete.do @DELETE    게시물번호
@@ -84,9 +93,15 @@ public class BoardController {
     public boolean doDeleteBoard(int bno){
         System.out.println("BoardController.doDeleteBoard");
         System.out.println("bno = " + bno);
-
-        boolean result = boardService.doDeleteBoard(bno);
-        return result;
+        Object object = request.getSession().getAttribute("loginDto");
+        if( object != null ){
+            String mid = (String)object;
+            boolean result = boardService.boardWriteAuth(bno,mid);
+            if(result){
+                return boardService.doDeleteBoard(bno);
+            }
+        }
+        return false;
     }
 
     // 6. 다운로드 ( 1.매개변수 : 파일이름 2.반환 3.사용처
@@ -98,7 +113,35 @@ public class BoardController {
         fileService.fileDownload(bfile);
     }
 
+    // 7. 댓글 작성 ( brcontent, brindex, mno, bno )
+    @PostMapping("/reply/write.do")
+    @ResponseBody
+    public boolean doPostReply( @RequestParam Map<String, String> map ){
+        System.out.println("BoardController.doPostReply");
+        System.out.println("map = " + map);
 
+        // 1. 현재 로그인 된 세션 ( 톰캣 서버 ( 자바프로그램 ) 메모리 (JVM) 저장소 )
+        Object object = request.getSession().getAttribute("loginDto");
+        if( object==null ) return false; // -2 세션오류 ( 로그인이 안됌 )
+
+        // 2. 형변환
+        String mid = (String) object;
+
+        // 3. MID -> MNO
+        long mno = memberService.doGetLoginInfo(mid).getNo();
+        // 4. Map에 mno 넣기
+        map.put("mno",mno+"");
+        System.out.println("map = " + map);
+        return boardService.doPostReply(map);
+    }
+
+    // 8. 댓글 출력 ( brno, brcontent, brinex, brdate ,mno )
+    @GetMapping("/reply/do")
+    @ResponseBody
+    public List<Map<String, String>> getReplyDo(int bno){
+        System.out.println("BoardController.getReplyDo");
+        return boardService.getReplyDo(bno);
+    }
 // ====================== 머스테치는 컨트롤에서 뷰 반환 ====================== //
 
 // =============================== 1. 글 쓰기 페이지 호출 =============================== //
@@ -119,10 +162,13 @@ public class BoardController {
     // 3. 게시판 상세페이지 이동     /board/view     @GET
     @GetMapping("/view")
     public String getBoardView( int bno ){
-
         return "ezenweb/board/view";
     }
 
     // 4. 글수정 페이지 이동        /board/update   @GET
+    @GetMapping("/update")
+    public String getBoardUpdate(){
+        return "ezenweb/board/update";
+    }
 
 }

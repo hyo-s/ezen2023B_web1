@@ -112,10 +112,14 @@ public class FileService {
                 // 2-2 HTTP 응답 스트립 객체 생성
                 response.getOutputStream().write(bytes);
 
+
+
                 BufferedOutputStream fout = new BufferedOutputStream(response.getOutputStream());
                 fout.write(bytes);
-                System.out.println("fout : "+fout);
-                System.out.println(response.getOutputStream());
+
+                // 버퍼 초기화
+                fin.close();
+                response.getOutputStream().close();
 
             }catch (Exception e){
                 System.out.println("e = " + e);
