@@ -149,7 +149,7 @@ public class AppStart {
             5. data : "HTTP SEND DATA"
                 METHOD : GET,DELETE -> 쿼리스트링
                 METHOD : POST,PUT -> BODY(본문)
-            7. content type :
+            7. content type : 서버에 보낼 데이터의 타입
                 일반 FORM        : [ DEFAULT ] application/x-www-form-urlencoded
                 첨부파일 FORM     : [ FALSE ] multipart/form-data
                 JS JSON         : application/json
@@ -159,6 +159,8 @@ public class AppStart {
                 async : true 기본값 ( 비동기 )
                 async : false ( 동기화 )
 
+            dataType : 서버에서 받을 데이터 타입
+                dataType : 'json' 객체로 받겠다
 
 
 

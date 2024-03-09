@@ -33,7 +33,7 @@ insert into member(id, pw, name, phone, birth) values('cc','cc','최학생','010
 insert into member(id, pw, name, phone, birth) values('dd','dd','나행정','010-4444-4444','19920404');
 insert into member(id, pw, name, phone, birth) values('ee','ee','이행정','010-5555-5555','19820505');
 select * from member;
-
+select mno, name, birth from member;
 # ================== 강의실 ================== #
 drop table if exists classroom;
 create table classroom(
@@ -56,7 +56,7 @@ create table classtime(
 	classno int,									# 강의 번호
     dayweek char(3) not null,						# 강의 요일
     starttime varchar(2) not null,					# 강의 시작 시간
-    endtime varchar(2) not null,						# 강의 끝 시간
+    endtime varchar(2) not null,					# 강의 끝 시간
     foreign key(classno) references class(classno)
 );
 insert into classtime(classno, dayweek, starttime, endtime) values(2, '월', 1, 3);
@@ -94,8 +94,12 @@ create table professor(
 );
 
 insert into professor(pgrade, degree, majorpart, mainmajor,mno_fk) values('aa','aa','aa','aa',1);
+insert into professor(pgrade, psalary, proom, degree, majorpart, mainmajor, mno_fk) values('aa',1,'aa','aa','aa','aa',1);
 insert into professor(pgrade, degree, majorpart, mainmajor,mno_fk) values('bb','bb','bb','bb',2);
 select * from professor;
+
+# 회원의 이름과 교수 같이 출력
+select m.name, p.* from professor p inner join member m on p.mno_fk = m.mno;
 
 # ================== 학기 ================== #
 drop table if exists season;
@@ -112,7 +116,7 @@ select * from season;
 # ================== 강의 정보 ================== #
 drop table if exists classinfo;
 create table classinfo(
-	no int auto_increment primary key,							# 
+	no int auto_increment primary key,							
     classno int,												# 강의과목 번호 FK
     professor int,												# 강의교수 번호 FK			
 	roomnumber int,												# 강의실 번호 FK
@@ -124,5 +128,4 @@ create table classinfo(
     foreign key(classno) references classtime(classno),
     foreign key(sno) references season(sno)
 );
-
 select * from classinfo;
