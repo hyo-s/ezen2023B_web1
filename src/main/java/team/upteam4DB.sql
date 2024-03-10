@@ -34,6 +34,7 @@ insert into member(id, pw, name, phone, birth) values('dd','dd','나행정','010
 insert into member(id, pw, name, phone, birth) values('ee','ee','이행정','010-5555-5555','19820505');
 select * from member;
 select mno, name, birth from member;
+
 # ================== 강의실 ================== #
 drop table if exists classroom;
 create table classroom(
@@ -96,8 +97,9 @@ create table professor(
 insert into professor(pgrade, degree, majorpart, mainmajor,mno_fk) values('aa','aa','aa','aa',1);
 insert into professor(pgrade, psalary, proom, degree, majorpart, mainmajor, mno_fk) values('aa',1,'aa','aa','aa','aa',1);
 insert into professor(pgrade, degree, majorpart, mainmajor,mno_fk) values('bb','bb','bb','bb',2);
+update professor set pgrade = 'cc', psalary = 2, proom = 'bb', degree = 'bb', majorpart = 'bb', mainmajor = 'bb' where mno_fk = 1 and pno = 1;
 select * from professor;
-
+select m.name, p.* from professor p inner join member m on p.mno_fk = m.mno;
 # 회원의 이름과 교수 같이 출력
 select m.name, p.* from professor p inner join member m on p.mno_fk = m.mno;
 
@@ -123,9 +125,22 @@ create table classinfo(
 	tno int,													# 강의 시간 번호 FK
     sno int,													# 학기 번호 FK
     foreign key(classno) references class(classno),
-    foreign key(professor) references member(mno),
-    foreign key(roomnumber) references classroom(roomnumber),
-    foreign key(classno) references classtime(classno),
+    foreign key(professor) references professor(pno),
+    foreign key(roomnumber) references classroom(rno),
+    foreign key(classno) references classtime(tno),
     foreign key(sno) references season(sno)
 );
 select * from classinfo;
+insert into classinfo(classno, professor) values(1, 1);
+insert into classinfo(classno, professor, roomnumber, tno, sno) values(1, 1, 1, 1, 1);
+# [ i : classinfo, c : class, p : professor, r : classroom, t : classtime, s : season ]
+
+select i.no, c.classname, m.name, r.roomnumber, t.dayweek, t.starttime, t.endtime, s.semester from classinfo i
+	inner join class c on i.classno = c.classno
+	inner join professor p on i.professor = p.pno
+    inner join classroom r on i.roomnumber = r.rno
+	inner join classtime t on i.tno = t.tno
+	inner join season s on i.sno = s.sno
+    inner join member m on p.pno = m.mno;
+         
+    
