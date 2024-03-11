@@ -3,6 +3,7 @@ package ezenweb.model.dao;
 import ezenweb.model.dto.BoardDto;
 import org.springframework.stereotype.Component;
 
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -236,21 +237,38 @@ public class BoardDao extends Dao {
     }
 
 // =============================== 8. 댓글 출력 =============================== //
-    public List<Map<String, String>> getReplyDo(int bno){
+    public List<Map<String, Object>> getReplyDo(int bno){
         System.out.println("BoardDao.getReplyDo");
         System.out.println("bno = " + bno);
-        List<Map<String, String>> list = new ArrayList<>();
+        List<Map<String, Object>> list = new ArrayList<>();
         try {
-            String sql = "select * from breply where bno = ? brindex = 0";
+            String sql = "select * from breply where bno = ? and brindex = 0";
             ps = conn.prepareStatement(sql);
             ps.setInt(1,bno);
             rs = ps.executeQuery();
             while(rs.next()){
-                Map<String, String> map = new HashMap<>();
+                Map<String, Object> map = new HashMap<>();
                 map.put("brno", rs.getString("brno"));
                 map.put("brcontent", rs.getString("brcontent"));
                 map.put("brdate", rs.getString("brdate"));
                 map.put("mno", rs.getString("mno"));
+                    // ============ 해당 상위 댓글의 하위 댓글들도 호출하기 ============ //
+                    String subSql = "select * from breply where brindex = ? and bno = "+bno;
+                    ps = conn.prepareStatement(subSql);
+                    ps.setInt(1,Integer.parseInt(rs.getString("brno")));
+                        // (int) 캐스팅 = 부모, 자식관계이어야 한다. vs Integer.parseInt( ) int와 String은 상하관계가 아니다
+                    //  rs 사용하면 안되는 이유 : 현재 상위 댓글 출력시 rs 사용중 이므로 (while 문에서 사용중)
+                ResultSet rs2 = ps.executeQuery();
+                List< Map<String, Object> > subList = new ArrayList<>();
+                while(rs2.next()){
+                    Map<String, Object> subMap = new HashMap<>();
+                    subMap.put("brno", rs2.getString("brno"));
+                    subMap.put("brcontent", rs2.getString("brcontent"));
+                    subMap.put("brdate", rs2.getString("brdate"));
+                    subMap.put("mno", rs2.getString("mno"));
+                    subList.add(subMap);
+                }
+                map.put("subReply", subList);
                 list.add(map);
             }
         }catch (Exception e){
