@@ -1,4 +1,4 @@
-drop database if exists upteam4;
+	drop database if exists upteam4;
 create database upteam4;
 use upteam4;
 
@@ -14,7 +14,7 @@ insert into class(classname, classtype) values('MYSQL데이터베이스', '전�
 insert into class(classname, classtype) values('수묵화의 기초', '교양필수');
 insert into class(classname, classtype) values('투자자의 인문학', '교양선택');
 select * from class;
-
+select classno, classname from class;
 # ================== 회원 ================== #
 drop table if exists member;
 create table member(
@@ -25,13 +25,15 @@ create table member(
     phone varchar(14) not null unique,				# 회원 전화번호
     email varchar(30) unique,						# 회원 이메일
     address varchar(100),							# 회원 주소
-    birth varchar(8) not null						# 회원 생년월일
+    birth varchar(8) not null,						# 회원 생년월일
+    state int default 0
 );
 insert into member(id, pw, name, phone, birth) values('aa','aa','김교수','010-1111-1111','19700101');
 insert into member(id, pw, name, phone, birth) values('bb','bb','박교수','010-2222-2222','19800202');
 insert into member(id, pw, name, phone, birth) values('cc','cc','최학생','010-3333-3333','19980303');
 insert into member(id, pw, name, phone, birth) values('dd','dd','나행정','010-4444-4444','19920404');
 insert into member(id, pw, name, phone, birth) values('ee','ee','이행정','010-5555-5555','19820505');
+insert into member(id, pw, name, phone, birth) values('admin','admin','admin','010-0000-0000','00000000');
 select * from member;
 select mno, name, birth from member;
 
@@ -60,11 +62,19 @@ create table classtime(
     endtime varchar(2) not null,					# 강의 끝 시간
     foreign key(classno) references class(classno)
 );
+update classtime set classno=2 where tno = 1;
+insert into classtime(dayweek, starttime, endtime) values('월', 1, 1);
+insert into classtime(dayweek, starttime, endtime) values('수', 1, 2);
+insert into classtime(dayweek, starttime, endtime) values('목', 2, 3);
+insert into classtime(dayweek, starttime, endtime) values('금', 4, 4);
 insert into classtime(classno, dayweek, starttime, endtime) values(2, '월', 1, 3);
-insert into classtime(classno, dayweek, starttime, endtime) values(3, '화', 3, 4);
-insert into classtime(classno, dayweek, starttime, endtime) values(3, '수', 5, 6);
+insert into classtime(classno, dayweek, starttime, endtime) values(3, '월', 1, 4);
+insert into classtime(classno, dayweek, starttime, endtime) values(3, '월', 1, 2);
 insert into classtime(classno, dayweek, starttime, endtime) values(4, '목', 5, 5);
+select * from classtime where classno is Null;
 select * from classtime;
+select * from classtime inner join class on classtime.classno = class.classno;
+select DISTINCT dayweek from classtime;
 
 # ================== 행정직원 ================== #
 drop table if exists employee;
@@ -95,7 +105,7 @@ create table professor(
 );
 
 insert into professor(pgrade, degree, majorpart, mainmajor,mno_fk) values('aa','aa','aa','aa',1);
-insert into professor(pgrade, psalary, proom, degree, majorpart, mainmajor, mno_fk) values('aa',1,'aa','aa','aa','aa',1);
+#insert into professor(pgrade, psalary, proom, degree, majorpart, mainmajor, mno_fk) values('aa',1,'aa','aa','aa','aa',1);
 insert into professor(pgrade, degree, majorpart, mainmajor,mno_fk) values('bb','bb','bb','bb',2);
 update professor set pgrade = 'cc', psalary = 2, proom = 'bb', degree = 'bb', majorpart = 'bb', mainmajor = 'bb' where mno_fk = 1 and pno = 1;
 select * from professor;
@@ -112,7 +122,7 @@ create table season(
     enddate date not null										# 학기 끝 날짜
 );
 insert into season(semester, startdate, enddate) values('202401', '2024-03-04', '2024-06-21');
-insert into season(semester, startdate, enddate) values('202401', '2024-09-02', '2024-12-20');
+insert into season(semester, startdate, enddate) values('202402', '2024-09-02', '2024-12-20');
 select * from season;
 
 # ================== 강의 정보 ================== #
@@ -131,16 +141,17 @@ create table classinfo(
     foreign key(sno) references season(sno)
 );
 select * from classinfo;
-insert into classinfo(classno, professor) values(1, 1);
-insert into classinfo(classno, professor, roomnumber, tno, sno) values(1, 1, 1, 1, 1);
+#insert into classinfo(classno, professor, roomnumber, tno, sno) values(1, 1, 1, 1, 1);
+#insert into classinfo(classno, professor, roomnumber, tno, sno) values(1, 2, 1, 1, 1);
 # [ i : classinfo, c : class, p : professor, r : classroom, t : classtime, s : season ]
 
-select i.no, c.classname, m.name, r.roomnumber, t.dayweek, t.starttime, t.endtime, s.semester from classinfo i
-	inner join class c on i.classno = c.classno
-	inner join professor p on i.professor = p.pno
-    inner join classroom r on i.roomnumber = r.rno
-	inner join classtime t on i.tno = t.tno
-	inner join season s on i.sno = s.sno
-    inner join member m on p.pno = m.mno;
-         
+select i.no, c.classname, i.professor, m.name, r.roomnumber, t.dayweek, t.starttime, t.endtime, s.semester from classinfo i
+	inner join class c on i.classno = c.classno				# 강의no = 최종강의no
+	inner join professor p on i.professor = p.pno			# 교수no = 최종교수no
+    inner join classroom r on i.roomnumber = r.rno			# 강의실no = 최종강의실no
+	inner join classtime t on i.tno = t.tno					# 강의시간no = 최종강의시간no
+	inner join season s on i.sno = s.sno					# 학기no = 최종학기no
+    inner join member m on p.pno = m.mno order by no;					# 회원no = 교수no
     
+
+    # 보여줘야 할거 강의명(강의번호), 강의요일, 시작시간, 끝시간 ( tno ), 교수이름(pno), 강의실(rno), 학기번호(sno)
