@@ -33,7 +33,9 @@ insert into member(id, pw, name, phone, birth) values('bb','bb','박교수','010
 insert into member(id, pw, name, phone, birth) values('cc','cc','최학생','010-3333-3333','19980303');
 insert into member(id, pw, name, phone, birth) values('dd','dd','나행정','010-4444-4444','19920404');
 insert into member(id, pw, name, phone, birth) values('ee','ee','이행정','010-5555-5555','19820505');
-insert into member(id, pw, name, phone, birth, state) values('ff','ff','김교수','010-1144-4411','19700101', 1);
+insert into member(id, pw, name, phone, birth, state) values('ff','ff','김학생','010-1144-4411','19700101', 1);
+insert into member(id, pw, name, phone, birth, state) values('gg','gg','김교수','010-2244-4411','19700101', 2);
+insert into member(id, pw, name, phone, birth, state) values('hh','hh','김행정','010-1144-3322','19700101', 3);
 insert into member(id, pw, name, phone, birth) values('admin','admin','admin','010-0000-0000','00000000');
 select * from member;
 select mno, name, birth from member;
