@@ -155,3 +155,28 @@ select i.no, c.classname, i.professor, m.name, r.roomnumber, t.dayweek, t.startt
     
 
     # 보여줘야 할거 강의명(강의번호), 강의요일, 시작시간, 끝시간 ( tno ), 교수이름(pno), 강의실(rno), 학기번호(sno)
+    
+    
+# =========================== 청원 게시판 =========================== #
+drop table if exists petition;
+create table petition(
+	no int auto_increment,					# 글 번호
+    ptitle varchar(100),					# 글 제목
+    pcontetnt varchar(255),					# 글 내용
+    pview bigint,							# 글 본 횟수
+    participation bigint,					# 청원 참여 횟수
+    regidate datetime default now(),		# 등록날짜
+    duedate datetime,						# 마감날짜
+    pstate int default 0,					# 청원 상태 0:접수 1:진행, 2:마감
+    mno int,								# 쓴사람 넘버
+    constraint petition_mno_fk foreign key(mno) references member(mno) on update cascade on delete cascade
+);
+
+create table participation(
+	pno int,						# 청원 글 번호
+    mno int,						# 청원을 참여한 사람의 회원번호
+	constraint participation_pno_pk foreign key(pno) references petition(pno) on update cascade on delete cascade,
+	constraint participation_mno_pk foreign key(mno) references member(mno) on update cascade on delete cascade
+);
+
+# 청원을 참여 했으니까 참여한 청원 글번호

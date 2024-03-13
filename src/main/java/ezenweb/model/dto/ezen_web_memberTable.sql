@@ -93,7 +93,7 @@ create table product(
     constraint product_pno_pk primary key(pno),
     constraint product_mno_fk foreign key(mno) references member(no) on update cascade on delete cascade
 );
-select * from product;
+select * from product;	
 
 # 2. 제품 이미지
 drop table if exists productimg;
@@ -105,6 +105,15 @@ create table productimg(
     constraint productimg_pno_fk foreign key(pno) references product(pno) on update cascade on delete cascade
 );
 select * from productimg;
+
+drop table if exists plike;
+create table plike(
+	mno bigint,
+    pno int,
+    constraint plike_mno_fk foreign key(mno) references member(no) on update cascade on delete cascade,
+    constraint plike_pno_fk foreign key(pno) references product(pno) on update cascade on delete cascade
+);
+select * from plike;
 
 
 /*
