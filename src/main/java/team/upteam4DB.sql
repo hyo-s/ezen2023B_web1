@@ -33,6 +33,9 @@ insert into member(id, pw, name, phone, birth) values('bb','bb','박교수','010
 insert into member(id, pw, name, phone, birth) values('cc','cc','최학생','010-3333-3333','19980303');
 insert into member(id, pw, name, phone, birth) values('dd','dd','나행정','010-4444-4444','19920404');
 insert into member(id, pw, name, phone, birth) values('ee','ee','이행정','010-5555-5555','19820505');
+insert into member(id, pw, name, phone, birth, state) values('ff','ff','김학생','010-1144-4411','19700101', 1);
+insert into member(id, pw, name, phone, birth, state) values('gg','gg','김교수','010-2244-4411','19700101', 2);
+insert into member(id, pw, name, phone, birth, state) values('hh','hh','김행정','010-1144-3322','19700101', 3);
 insert into member(id, pw, name, phone, birth) values('admin','admin','admin','010-0000-0000','00000000');
 select * from member;
 select mno, name, birth from member;
@@ -151,7 +154,7 @@ select i.no, c.classname, i.professor, m.name, r.roomnumber, t.dayweek, t.startt
     inner join classroom r on i.roomnumber = r.rno			# 강의실no = 최종강의실no
 	inner join classtime t on i.tno = t.tno					# 강의시간no = 최종강의시간no
 	inner join season s on i.sno = s.sno					# 학기no = 최종학기no
-    inner join member m on p.pno = m.mno order by no;					# 회원no = 교수no
+    inner join member m on p.mno_fk = m.mno order by no;					# 회원no = 교수no
     
 
     # 보여줘야 할거 강의명(강의번호), 강의요일, 시작시간, 끝시간 ( tno ), 교수이름(pno), 강의실(rno), 학기번호(sno)
@@ -160,7 +163,7 @@ select i.no, c.classname, i.professor, m.name, r.roomnumber, t.dayweek, t.startt
 # =========================== 청원 게시판 =========================== #
 drop table if exists petition;
 create table petition(
-	no int auto_increment,					# 글 번호
+	bno int auto_increment,					# 글 번호
     ptitle varchar(100),					# 글 제목
     pcontetnt varchar(255),					# 글 내용
     pview bigint,							# 글 본 횟수
@@ -168,15 +171,14 @@ create table petition(
     regidate datetime default now(),		# 등록날짜
     duedate datetime,						# 마감날짜
     pstate int default 0,					# 청원 상태 0:접수 1:진행, 2:마감
-    mno int,								# 쓴사람 넘버
-    constraint petition_mno_fk foreign key(mno) references member(mno) on update cascade on delete cascade
+    mno_fk int,								# 쓴사람 넘버
+    primary key(bno),
+    constraint petition_mno_fk foreign key(mno_fk) references member(mno) on update cascade on delete cascade
 );
 
 create table participation(
-	pno int,						# 청원 글 번호
+	bno int,						# 청원 글 번호
     mno int,						# 청원을 참여한 사람의 회원번호
-	constraint participation_pno_pk foreign key(pno) references petition(pno) on update cascade on delete cascade,
+	constraint participation_pno_pk foreign key(bno) references petition(bno) on update cascade on delete cascade,
 	constraint participation_mno_pk foreign key(mno) references member(mno) on update cascade on delete cascade
 );
-
-# 청원을 참여 했으니까 참여한 청원 글번호
